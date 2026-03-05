@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Brands | Cadsyent</title>
+  <meta name="description" content="Discover Cadsyent talent for brand collaborations across musicians, actors, and content creators." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Manrope:wght@400;500;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <header class="site-header" id="top">
+    <div class="container nav-row">
+      <a href="../#top" class="brand" aria-label="Cadsyent home">CADSYENT</a>
+      <button class="menu-toggle" aria-expanded="false" aria-controls="mainNav" aria-label="Open menu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+      <nav class="main-nav" id="mainNav">
+        <a href="../#top" class="menu-brand">CADSYENT</a>
+        <a href="../about/">About</a>
+        <a href="../expertise/fashion/">Expertise</a>
+        <a href="../expertise/fashion/">Talents</a>
+        <a href="../contact/">Contact</a>
+        <a href="../brands/">Brands</a>
+        <a href="../events/">Events</a>
+      </nav>
+      <div class="social-links">
+        <a class="book-now-btn" href="mailto:info@cadsybrownent.com">Book Now</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="hero-media" aria-hidden="true"></div>
+      <div class="hero-shade" aria-hidden="true"></div>
+      <div class="hero-grain" aria-hidden="true"></div>
+      <div class="container hero-content">
+        <p class="kicker">Brand Partnerships</p>
+        <h1 class="hero-title">
+          <span class="type-line" id="hero-title-line-1" data-text="BRAND"></span>
+          <span class="type-line" id="hero-title-line-2" data-text="ROSTER"></span>
+        </h1>
+        <div class="hero-meta reveal" data-delay="100">
+          <p>Musicians</p>
+          <p>Actors</p>
+          <p>Content Creators</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="row-head">
+          <p class="section-label">Filter By Category</p>
+        </div>
+        <div class="taxonomy">
+          <a href="#" data-filter="all" class="filter-btn active">All Talent</a>
+          <a href="#" data-filter="musician" class="filter-btn">Musicians</a>
+          <a href="#" data-filter="actor" class="filter-btn">Actors</a>
+          <a href="#" data-filter="creator" class="filter-btn">Content Creators</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section-tight">
+      <div class="container">
+        <div class="talent-grid" id="talentGrid">
+          <!-- Talent cards will be populated by CMS -->
+        </div>
+      </div>
+    </section>
+
+    <section class="newsletter section-tight">
+      <div class="container news-row">
+        <h2>Sign up to our newsletter</h2>
+        <form class="newsletter-form" onsubmit="event.preventDefault(); alert('Thanks. You are subscribed.');">
+          <input type="email" placeholder="Enter your email address" required />
+          <button type="submit">Subscribe</button>
+        </form>
+      </div>
+    </section>
+
+    <section class="contact section" id="contact">
+      <div class="container footer-grid">
+        <div>
+          <h3>Offices</h3>
+          <p>London</p>
+          <p>Manchester</p>
+          <p>Washington</p>
+          <p>Los Angeles</p>
+          <p>New York</p>
+        </div>
+        <div>
+          <h3>Explore</h3>
+          <p><a href="../about/">Representation</a></p>
+          <p><a href="../expertise/fashion/">Services</a></p>
+        </div>
+        <div>
+          <h3>Company</h3>
+          <p><a href="#">Careers</a></p>
+        </div>
+        <div>
+          <h3>Policies</h3>
+          <p><a href="#">Terms & Conditions</a></p>
+          <p><a href="#">Cookie Policy</a></p>
+          <p><a href="#">Privacy Policy</a></p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-row">
+      <p>© 2026 Cadsyent. All rights reserved.</p>
+      <a href="#top">Back to top</a>
+    </div>
+  </footer>
+
+  <script src="../supabase-config.js"></script>
+  <script src="../cms.js"></script>
+  <script src="brands.js"></script>
+  <script src="../script.js"></script>
+</body>
+</html>
