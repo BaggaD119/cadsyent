@@ -181,8 +181,8 @@ body {
 }
 
 .menu-toggle.is-open {
-  background: rgba(255, 255, 255, 0.06);
-  border-color: #666;
+  background: #000000;
+  border-color: #000000;
 }
 
 .menu-toggle.is-open span:nth-child(1) {
@@ -996,16 +996,16 @@ p {
     position: fixed;
     inset: 0;
     min-height: 100vh;
-    background: linear-gradient(180deg, rgba(10, 10, 10, 0.26) 0%, rgba(14, 14, 14, 0.34) 100%);
+    background: #000000;
     border: 0;
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
-    padding: 24px 4% 40px;
+    padding: 110px 4% 56px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 12px;
+    gap: 18px;
     opacity: 0;
     transform: translateY(-18px);
     pointer-events: none;
@@ -1023,18 +1023,21 @@ p {
   .menu-brand {
     display: inline-flex;
     align-items: center;
+    justify-content: flex-start;
     font-family: "Manrope", sans-serif;
     font-size: 1rem;
     font-weight: 800;
     letter-spacing: 1.6px;
     text-transform: uppercase;
     color: #f2f2ef;
-    margin-top: 52px;
-    margin-bottom: 20px;
-    padding-bottom: 12px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.18);
-    width: min(280px, 90%);
-    text-align: center;
+    position: absolute;
+    top: 18px;
+    left: 4%;
+    margin: 0;
+    padding: 0;
+    border-bottom: 0;
+    width: auto;
+    text-align: left;
   }
 
   .menu-brand .brand-logo-image {
@@ -1045,20 +1048,33 @@ p {
   .main-nav a {
     font-family: "Times New Roman", Times, serif;
     font-size: clamp(1.1rem, 5vw, 1.35rem);
-    font-weight: 400;
-    letter-spacing: 0;
+    font-weight: 600;
+    letter-spacing: 0.01em;
     line-height: 1.2;
     text-transform: none;
-    width: auto;
+    width: min(360px, 100%);
     text-align: center;
-    padding: 6px 0;
-    border: 0;
+    padding: 18px 20px;
+    border: 1px solid rgba(255, 255, 255, 0.14);
     border-radius: 0;
     color: #ffffff;
-    background: transparent;
+    background: rgba(255, 255, 255, 0.04);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.02);
     opacity: 1;
     transform: none;
-    transition: color 0.2s ease;
+    transition:
+      color 0.2s ease,
+      background-color 0.2s ease,
+      border-color 0.2s ease,
+      transform 0.2s ease;
+  }
+
+  .main-nav .menu-brand {
+    width: auto;
+    padding: 0;
+    background: transparent;
+    border: 0;
+    box-shadow: none;
   }
 
   .main-nav a:hover,
@@ -1066,6 +1082,16 @@ p {
     color: #ff7a1a;
     text-decoration: none;
     outline: none;
+    background: rgba(255, 122, 26, 0.08);
+    border-color: rgba(255, 122, 26, 0.5);
+    transform: translateX(4px);
+  }
+
+  .main-nav .menu-brand:hover,
+  .main-nav .menu-brand:focus-visible {
+    background: transparent;
+    border: 0;
+    transform: none;
   }
 
   .social-links {
