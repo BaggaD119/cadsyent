@@ -88,6 +88,78 @@ const revealObserver = new IntersectionObserver((entries, observer) => {
 
 revealItems.forEach((item) => revealObserver.observe(item));
 
+const divisionSection = document.querySelector('.divisions');
+const divisionItems = Array.from(
+  document.querySelectorAll('.divisions .division-item')
+);
+let activeDivisionItem = null;
+
+const setActiveDivisionItem = (nextItem) => {
+  if (activeDivisionItem === nextItem) return;
+  activeDivisionItem?.classList.remove('is-scroll-active');
+  activeDivisionItem = nextItem || null;
+  activeDivisionItem?.classList.add('is-scroll-active');
+};
+
+const updateDivisionScrollState = () => {
+  if (!divisionSection || !divisionItems.length) {
+    setActiveDivisionItem(null);
+    return;
+  }
+
+  const sectionRect = divisionSection.getBoundingClientRect();
+  const isMobileViewport = window.innerWidth <= 900;
+  const viewportFocus = window.innerHeight * (isMobileViewport ? 0.42 : 0.48);
+  const sectionVisible =
+    sectionRect.top < window.innerHeight * 0.85 &&
+    sectionRect.bottom > window.innerHeight * 0.2;
+
+  if (!sectionVisible) {
+    setActiveDivisionItem(null);
+    return;
+  }
+
+  let nextItem = null;
+  let shortestDistance = Number.POSITIVE_INFINITY;
+
+  divisionItems.forEach((item) => {
+    if (!item.classList.contains('has-hover-media')) return;
+    const rect = item.getBoundingClientRect();
+    const inView = rect.bottom > window.innerHeight * 0.18 && rect.top < window.innerHeight * 0.82;
+    if (!inView) return;
+
+    const itemCenter = rect.top + rect.height / 2;
+    const distance = Math.abs(itemCenter - viewportFocus);
+
+    if (distance < shortestDistance) {
+      shortestDistance = distance;
+      nextItem = item;
+    }
+  });
+
+  if (!nextItem) {
+    nextItem = divisionItems.find((item) => item.classList.contains('has-hover-media')) || null;
+  }
+
+  setActiveDivisionItem(nextItem);
+};
+
+let divisionScrollTicking = false;
+const queueDivisionScrollUpdate = () => {
+  if (divisionScrollTicking) return;
+  divisionScrollTicking = true;
+  window.requestAnimationFrame(() => {
+    divisionScrollTicking = false;
+    updateDivisionScrollState();
+  });
+};
+
+window.addEventListener('scroll', queueDivisionScrollUpdate, { passive: true });
+window.addEventListener('resize', queueDivisionScrollUpdate);
+window.addEventListener('load', updateDivisionScrollState);
+window.addEventListener('cadsyent:content-applied', updateDivisionScrollState);
+updateDivisionScrollState();
+
 const counters = document.querySelectorAll('.counter');
 const countObserver = new IntersectionObserver((entries, observer) => {
   entries.forEach((entry) => {
