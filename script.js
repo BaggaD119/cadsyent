@@ -1,3 +1,40 @@
+/* ─── Page Loader ─────────────────────────────────────────────────────────── */
+(function () {
+  const loader = document.getElementById('page-loader');
+  const loaderText = document.getElementById('loader-text');
+  if (!loader) return;
+
+  const states = ['Loading...', 'Fetching Data..', 'Syncing...', 'Processing..', 'Optimizing...'];
+  let i = 0;
+  const textInterval = setInterval(() => {
+    i = (i + 1) % states.length;
+    if (loaderText) {
+      loaderText.style.animation = 'none';
+      // Force reflow so the animation restarts
+      void loaderText.offsetWidth;
+      loaderText.style.animation = '';
+      loaderText.textContent = states[i];
+    }
+  }, 1000);
+
+  const hideLoader = () => {
+    clearInterval(textInterval);
+    loader.classList.add('loader-hidden');
+    loader.addEventListener('transitionend', () => {
+      loader.remove();
+    }, { once: true });
+  };
+
+  if (document.readyState === 'complete') {
+    // Already loaded — short delay so the animation is visible
+    setTimeout(hideLoader, 600);
+  } else {
+    window.addEventListener('load', () => setTimeout(hideLoader, 400));
+  }
+})();
+
+/* ─────────────────────────────────────────────────────────────────────────── */
+
 const header = document.querySelector('.site-header');
 const menuToggle = document.querySelector('.menu-toggle');
 const nav = document.querySelector('.main-nav');

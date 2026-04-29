@@ -17,6 +17,33 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
+    <!-- Loading Screen -->
+    <div id="page-loader" aria-hidden="true">
+      <div class="loader-inner">
+        <div class="loader-spinner">
+          <!-- Base Glow -->
+          <div class="loader-glow"></div>
+          <!-- Outer Dashed Ring -->
+          <div class="loader-ring-outer"></div>
+          <!-- Main Arc -->
+          <div class="loader-arc-main"></div>
+          <!-- Reverse Arc -->
+          <div class="loader-arc-reverse"></div>
+          <!-- Inner Fast Ring -->
+          <div class="loader-ring-inner"></div>
+          <!-- Orbital Dot -->
+          <div class="loader-orbital">
+            <div class="loader-dot"></div>
+          </div>
+          <!-- Center Core -->
+          <div class="loader-core"></div>
+        </div>
+        <div class="loader-text-wrap">
+          <span id="loader-text" class="loader-text">Initializing</span>
+        </div>
+      </div>
+    </div>
+
     <header class="site-header" id="top">
       <div class="container nav-row">
         <a href="#top" class="brand" aria-label="Cadsy Brown Entertainment home">CADSY BROWN ENTERTAINMENT</a>
