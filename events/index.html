@@ -1,126 +1,162 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Cadsy Brown Entertainment | Events</title>
-  <meta name="description" content="Cadsy Brown Entertainment events, featuring news, blogs, and testimonials." />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Manrope:wght@400;500;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="../styles.css" />
-</head>
-<body>
-  <!-- Loading Screen -->
-  <div id="page-loader" aria-hidden="true">
-    <div class="loader-inner">
-      <div class="loader-spinner">
-        <div class="loader-glow"></div>
-        <div class="loader-ring-outer"></div>
-        <div class="loader-arc-main"></div>
-        <div class="loader-arc-reverse"></div>
-        <div class="loader-ring-inner"></div>
-        <div class="loader-orbital"><div class="loader-dot"></div></div>
-        <div class="loader-core"></div>
-      </div>
-      <div class="loader-text-wrap">
-        <span id="loader-text" class="loader-text">Initializing</span>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cadsy Brown Entertainment | Events</title>
+    <meta
+      name="description"
+      content="Cadsy Brown Entertainment events, featuring news, blogs, and testimonials."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Anton&family=Manrope:wght@400;500;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../styles.css" />
+  </head>
+  <body>
+    <!-- Loading Screen -->
+    <div id="page-loader" aria-hidden="true">
+      <div class="loader-inner">
+        <div class="loader-spinner">
+          <div class="loader-glow"></div>
+          <div class="loader-ring-outer"></div>
+          <div class="loader-arc-main"></div>
+          <div class="loader-arc-reverse"></div>
+          <div class="loader-ring-inner"></div>
+          <div class="loader-orbital"><div class="loader-dot"></div></div>
+          <div class="loader-core"></div>
+        </div>
+        <div class="loader-text-wrap">
+          <span id="loader-text" class="loader-text">Initializing</span>
+        </div>
       </div>
     </div>
-  </div>
 
-  <header class="site-header scrolled" id="top">
-        <div class="mobile-drawer-content">
-          <div class="mobile-drawer-header">
-            <a href="../index.html#top" class="menu-brand">CADSY BROWN ENTERTAINMENT</a>
+    <header class="site-header scrolled" id="top">
+      <div class="container nav-row">
+        <a
+          href="../index.html"
+          class="brand"
+          aria-label="Cadsy Brown Entertainment home"
+          >CADSY BROWN ENTERTAINMENT</a
+        >
+        <button
+          class="menu-toggle"
+          aria-expanded="false"
+          aria-controls="mainNav"
+          aria-label="Open menu"
+        >
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+        <nav class="main-nav" id="mainNav">
+          <a href="../about/" class="desktop-nav-link">About</a>
+          <a href="../expertise/fashion/" class="desktop-nav-link">Expertise</a>
+          <a href="../expertise/fashion/" class="desktop-nav-link">Talents</a>
+          <a href="../contact/" class="desktop-nav-link">Contact</a>
+          <a href="../brands/" class="desktop-nav-link">Brands</a>
+          <a href="../events/" class="desktop-nav-link">Events</a>
+          <div class="mobile-drawer-content">
+            <div class="mobile-drawer-header">
+              <a href="../index.html#top" class="menu-brand"
+                >CADSY BROWN ENTERTAINMENT</a
+              >
+            </div>
+            <div class="mobile-drawer-list">
+              <a
+                href="../expertise/fashion/"
+                class="mobile-drawer-link mobile-drawer-link--primary"
+                >For Talents</a
+              >
+              <a
+                href="../brands/"
+                class="mobile-drawer-link mobile-drawer-link--primary"
+                >For Brands</a
+              >
+              <a
+                href="../events/"
+                class="mobile-drawer-link mobile-drawer-link--primary"
+                >For Events</a
+              >
+              <a href="../index.html#top" class="mobile-drawer-link">Home</a>
+              <a href="../about/" class="mobile-drawer-link">About</a>
+              <a href="../expertise/fashion/" class="mobile-drawer-link"
+                >Expertise</a
+              >
+              <a href="../contact/" class="mobile-drawer-link">Contact</a>
+            </div>
+            <div class="mobile-drawer-footer">
+              <a href="#">Privacy Policy</a>
+              <a href="#">Terms</a>
+            </div>
           </div>
+        </nav>
+        <div class="menu-overlay" aria-hidden="true"></div>
+        <div class="social-links">
+          <a class="book-now-btn" href="mailto:info@cadsybrownent.com"
+            >Book Now</a
+          >
+        </div>
+      </div>
+    </header>
 
-                    <div class="mobile-drawer-list">
-            <a href="../expertise/fashion/" class="mobile-drawer-link mobile-drawer-link--primary">For Talents</a>
-            <a href="../brands/" class="mobile-drawer-link mobile-drawer-link--primary">For Brands</a>
-            <a href="../events/" class="mobile-drawer-link mobile-drawer-link--primary">For Events</a>
-            <a href="../index.html#top" class="mobile-drawer-link">Home</a>
-            <a href="../about/" class="mobile-drawer-link">About</a>
-            <a href="../expertise/fashion/" class="mobile-drawer-link">Expertise</a>
-            <a href="../contact/" class="mobile-drawer-link">Contact</a>
+    <main>
+      <section class="hero" style="min-height: 70vh">
+        <div class="hero-media" aria-hidden="true"></div>
+        <div class="hero-shade" aria-hidden="true"></div>
+        <div class="hero-grain" aria-hidden="true"></div>
+        <div class="container hero-content">
+          <p class="kicker">Cadsy Brown Entertainment</p>
+          <h1 class="hero-title"><span>E v e n t s</span></h1>
+          <div class="hero-meta reveal" data-delay="70">
+            <p>News</p>
+            <p>Blogs</p>
+            <p>Testimonials</p>
           </div>
+        </div>
+      </section>
 
-          <div class="mobile-drawer-footer">
-            <a href="#">Privacy Policy</a>
-            <a href="#">Terms</a>
+      <section class="section" id="news">
+        <div class="container">
+          <div class="row-head">
+            <h2 class="section-title">News</h2>
+          </div>
+          <div class="division-list" id="news-list"></div>
+        </div>
+      </section>
+
+      <section class="fashion-focus section" id="blogs">
+        <div class="container">
+          <h2 class="section-title">Blogs</h2>
+          <div class="fashion-grid" id="blogs-list"></div>
+        </div>
+      </section>
+
+      <section class="section" id="testimonials">
+        <div class="container">
+          <h2 class="section-title">Testimonials</h2>
+          <div class="testimonials-marquee" aria-label="Client feedback">
+            <div class="testimonials-track" id="testimonials-track"></div>
           </div>
         </div>
-      </nav>
-      <div class="menu-overlay" aria-hidden="true"></div>
-      <div class="social-links">
-        <a class="book-now-btn" href="mailto:info@cadsybrownent.com">Book Now</a>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container footer-row">
+        <p id="footer-copy">
+          © 2026 Cadsy Brown Entertainment. All rights reserved.
+        </p>
+        <a href="../index.html">Back to home</a>
       </div>
-    </div>
-  </header>
+    </footer>
 
-  <main>
-    <section class="hero" style="min-height:70vh;">
-      <div class="hero-media" aria-hidden="true"></div>
-      <div class="hero-shade" aria-hidden="true"></div>
-      <div class="hero-grain" aria-hidden="true"></div>
-      <div class="container hero-content">
-        <p class="kicker">Cadsy Brown Entertainment</p>
-        <h1 class="hero-title"><span>E v e n t s</span></h1>
-        <div class="hero-meta reveal" data-delay="70">
-          <p>News</p>
-          <p>Blogs</p>
-          <p>Testimonials</p>
-        </div>
-      </div>
-    </section>
-
-    <section class="section" id="news">
-      <div class="container">
-        <div class="row-head">
-          <h2 class="section-title">News</h2>
-        </div>
-        <div class="division-list" id="news-list"></div>
-      </div>
-    </section>
-
-    <section class="fashion-focus section" id="blogs">
-      <div class="container">
-        <h2 class="section-title">Blogs</h2>
-        <div class="fashion-grid" id="blogs-list"></div>
-      </div>
-    </section>
-
-    <section class="section" id="testimonials">
-      <div class="container">
-        <h2 class="section-title">Testimonials</h2>
-        <div class="testimonials-marquee" aria-label="Client feedback">
-          <div class="testimonials-track" id="testimonials-track"></div>
-        </div>
-      </div>
-    </section>
-  </main>
-
-  <footer class="site-footer">
-    <div class="container footer-row">
-      <p id="footer-copy">© 2026 Cadsy Brown Entertainment. All rights reserved.</p>
-      <a href="../index.html">Back to home</a>
-    </div>
-  </footer>
-
-  <script src="../supabase-config.js?v=20260408d"></script>
-  <script src="../cms.js?v=20260408d"></script>
-  <script src="../script.js?v=20260408d"></script>
-</body>
+    <script src="../supabase-config.js?v=20260408d"></script>
+    <script src="../cms.js?v=20260408d"></script>
+    <script src="../script.js?v=20260408d"></script>
+  </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
