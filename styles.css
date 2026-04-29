@@ -1447,8 +1447,8 @@ p {
     left: 50%;
     right: auto;
     bottom: auto;
-    width: min(380px, 85vw);
-    max-height: 72vh;
+    width: min(340px, 80vw);
+    max-height: 50vh;
     transform: translate(-50%, calc(-50% + 200px));
     background: rgba(20, 20, 20, 0.95);
     border: 1px solid rgba(255, 255, 255, 0.1);
@@ -1488,10 +1488,10 @@ p {
   }
 
   .mobile-drawer-list {
-    padding: 24px 20px;
+    padding: 16px 16px;
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 10px;
   }
 
   .mobile-drawer-link {
