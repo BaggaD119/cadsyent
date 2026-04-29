@@ -1596,6 +1596,12 @@ p {
     pointer-events: auto;
   }
 
+  body.menu-open .hero,
+  body.menu-open .site-header,
+  body.menu-open .section {
+    filter: blur(8px);
+  }
+
   .social-links {
     display: none;
   }
