@@ -28,19 +28,7 @@ const sections = [
     { key: 'social.linkedinUrl', label: 'LinkedIn URL', type: 'url' }
   ]},
   { id: 'fashion', title: 'Talent Section', fields: [
-    { key: 'fashion.lead', label: 'Talent Lead Text', type: 'textarea' },
-    { key: 'fashion.card1.title', label: 'Card 1 Title', type: 'text' },
-    { key: 'fashion.card1.body', label: 'Card 1 Description', type: 'textarea' },
-    { key: 'fashion.card1.image', label: 'Card 1 Photo', type: 'image' },
-    { key: 'fashion.card1.url', label: 'Card 1 Link URL', type: 'url' },
-    { key: 'fashion.card2.title', label: 'Card 2 Title', type: 'text' },
-    { key: 'fashion.card2.body', label: 'Card 2 Description', type: 'textarea' },
-    { key: 'fashion.card2.image', label: 'Card 2 Photo', type: 'image' },
-    { key: 'fashion.card2.url', label: 'Card 2 Link URL', type: 'url' },
-    { key: 'fashion.card3.title', label: 'Card 3 Title', type: 'text' },
-    { key: 'fashion.card3.body', label: 'Card 3 Description', type: 'textarea' },
-    { key: 'fashion.card3.image', label: 'Card 3 Photo', type: 'image' },
-    { key: 'fashion.card3.url', label: 'Card 3 Link URL', type: 'url' }
+    { key: 'fashion.lead', label: 'Talent Lead Text', type: 'textarea' }
   ]},
   { id: 'divisions', title: 'Divisions', fields: [
     { key: 'divisions.division1.title', label: 'Division 1 Title', type: 'text' },
@@ -115,6 +103,48 @@ const normalizeHeroMediaDraft = () => {
   }
 };
 
+const ensureFashionCardsDraft = () => {
+  if (!draftContent.fashion || typeof draftContent.fashion !== 'object') draftContent.fashion = {};
+  draftContent.fashion.cardsManaged = true;
+  const toCard = (item, index) => ({
+    id: item && item.id ? String(item.id) : uid(`talent-${index + 1}`),
+    title: String(item && item.title ? item.title : ''),
+    body: String(item && item.body ? item.body : ''),
+    image: String(item && item.image ? item.image : ''),
+    url: String(item && item.url ? item.url : '')
+  });
+  const fromList = Array.isArray(draftContent.fashion.cards)
+    ? draftContent.fashion.cards.map((item, index) => toCard(item, index))
+    : [];
+  const fromLegacy = [draftContent.fashion.card1, draftContent.fashion.card2, draftContent.fashion.card3]
+    .map((item, index) => toCard(item, index))
+    .filter((item) => item.title || item.body || item.image || item.url);
+
+  const cards = fromList.length ? fromList : fromLegacy;
+  if (!cards.length) {
+    cards.push(
+      toCard({ title: 'Musicians', body: 'Strategic management for recording artists, producers, and DJs across releases, partnerships, and touring opportunities.' }, 0),
+      toCard({ title: 'Actors', body: 'Career representation for screen talent spanning film, television, streaming productions, and brand collaborations.' }, 1),
+      toCard({ title: 'Content Creators', body: 'End-to-end support for digital creators building consistent content, loyal communities, and high-impact partnerships.' }, 2)
+    );
+  }
+  draftContent.fashion.cards = cards;
+  syncFashionLegacyCards();
+};
+
+const syncFashionLegacyCards = () => {
+  if (!draftContent || !draftContent.fashion || !Array.isArray(draftContent.fashion.cards)) return;
+  const toLegacyCard = (item) => ({
+    title: String(item?.title || ''),
+    body: String(item?.body || ''),
+    image: String(item?.image || ''),
+    url: String(item?.url || '')
+  });
+  draftContent.fashion.card1 = toLegacyCard(draftContent.fashion.cards[0]);
+  draftContent.fashion.card2 = toLegacyCard(draftContent.fashion.cards[1]);
+  draftContent.fashion.card3 = toLegacyCard(draftContent.fashion.cards[2]);
+};
+
 const renderStatus = (message, isError = false) => {
   if (!statusEl) {
     if (isError && typeof window !== 'undefined' && typeof window.alert === 'function') {
@@ -124,6 +154,11 @@ const renderStatus = (message, isError = false) => {
   }
   statusEl.textContent = message;
   statusEl.classList.toggle('is-error', isError);
+};
+
+const verifyPublicSync = async () => {
+  if (typeof cmsApi.verifyPublicContentReadable !== 'function') return;
+  await cmsApi.verifyPublicContentReadable();
 };
 
 const ensureAuthOrFail = async () => {
@@ -187,9 +222,10 @@ const createInput = (field, initialValue) => {
         const url = await cmsApi.uploadImageToSupabase(file, field.key);
         imageState[field.key] = url;
         setByPath(draftContent, field.key, url);
+        draftContent = await cmsApi.saveContent(draftContent, { allowLocalFallback: false });
         preview.src = url;
         preview.hidden = false;
-        renderStatus(`${field.label} uploaded. Save to publish.`);
+        renderStatus(`${field.label} uploaded and saved.`);
       } catch (error) {
         renderStatus(error.message, true);
       }
@@ -291,8 +327,10 @@ const createInput = (field, initialValue) => {
         renderStatus(`Uploading ${field.label}...`);
         const url = await cmsApi.uploadImageToSupabase(file, field.key);
         applyMediaValue(url);
+        draftContent = await cmsApi.saveContent(draftContent, { allowLocalFallback: false });
+        await verifyPublicSync();
         fileInput.value = '';
-        renderStatus(`${field.label} uploaded. Save to publish.`);
+        renderStatus(`${field.label} uploaded and saved.`);
       } catch (error) {
         renderStatus(error.message, true);
       }
@@ -368,8 +406,10 @@ const createInput = (field, initialValue) => {
         list.push(`${prefix}${url}`);
         textarea.value = list.join('\n');
         setListValue(list);
+        draftContent = await cmsApi.saveContent(draftContent, { allowLocalFallback: false });
+        await verifyPublicSync();
         input.value = '';
-        renderStatus(`${field.label} uploaded. Save to publish.`);
+        renderStatus(`${field.label} uploaded and saved.`);
       } catch (error) {
         renderStatus(error.message, true);
       }
@@ -476,8 +516,10 @@ const createModuleCard = (groupName, item, index) => {
         renderStatus('Uploading blog image...');
         const url = await cmsApi.uploadImageToSupabase(file, `${groupName}-${item.id}`);
         item.image = url;
+        draftContent = await cmsApi.saveContent(draftContent, { allowLocalFallback: false });
+        await verifyPublicSync();
         renderForm();
-        renderStatus('Blog image uploaded.');
+        renderStatus('Blog image uploaded and saved.');
       } catch (error) {
         renderStatus(error.message, true);
       }
@@ -528,6 +570,168 @@ const addItem = (groupName) => {
   if (groupName === 'Blogs') arr.push({ id: uid('blog'), title: 'New Blog', body: 'Blog summary goes here.', image: '', published: true });
   if (groupName === 'Testimonials') arr.push({ id: uid('tm'), name: 'Client Name', role: 'Role', initials: 'CL', feedback: 'Client feedback text.', published: true });
   renderForm();
+};
+
+const moveTalentCard = (index, delta) => {
+  ensureFashionCardsDraft();
+  const arr = draftContent.fashion.cards;
+  const nextIndex = index + delta;
+  if (nextIndex < 0 || nextIndex >= arr.length) return;
+  const [item] = arr.splice(index, 1);
+  arr.splice(nextIndex, 0, item);
+  ensureFashionCardsDraft();
+  renderForm();
+};
+
+const removeTalentCard = (index) => {
+  ensureFashionCardsDraft();
+  draftContent.fashion.cards.splice(index, 1);
+  ensureFashionCardsDraft();
+  renderForm();
+};
+
+const addTalentCard = () => {
+  ensureFashionCardsDraft();
+  draftContent.fashion.cardsManaged = true;
+  draftContent.fashion.cards.push({
+    id: uid('talent'),
+    title: '',
+    body: '',
+    image: '',
+    url: ''
+  });
+  ensureFashionCardsDraft();
+  renderForm();
+};
+
+const createTalentCardEditor = (item, index) => {
+  const card = document.createElement('article');
+  card.className = 'module-card';
+
+  const head = document.createElement('div');
+  head.className = 'module-card-head';
+  head.innerHTML = `<strong>Talent Card ${index + 1}</strong>`;
+
+  const actions = document.createElement('div');
+  actions.className = 'module-actions';
+  const up = document.createElement('button');
+  up.type = 'button'; up.className = 'admin-btn'; up.textContent = 'Up';
+  const down = document.createElement('button');
+  down.type = 'button'; down.className = 'admin-btn'; down.textContent = 'Down';
+  const del = document.createElement('button');
+  del.type = 'button'; del.className = 'admin-btn'; del.textContent = 'Delete';
+  actions.append(up, down, del);
+  head.appendChild(actions);
+  card.appendChild(head);
+
+  const fields = document.createElement('div');
+  fields.className = 'module-fields';
+  const syncTalentPreview = (url) => {
+    const clean = String(url || '').trim();
+    if (!clean) {
+      preview.hidden = true;
+      preview.src = '';
+      return;
+    }
+    preview.hidden = false;
+    preview.src = clean;
+  };
+  let imageUrlInput = null;
+  const addField = (labelText, key, type = 'text') => {
+    const label = document.createElement('label');
+    label.className = 'admin-field';
+    const title = document.createElement('span');
+    title.className = 'admin-label';
+    title.textContent = labelText;
+    const input = type === 'textarea' ? document.createElement('textarea') : document.createElement('input');
+    input.className = 'admin-input';
+    if (type === 'textarea') input.rows = 3;
+    else input.type = 'text';
+    input.value = item[key] || '';
+    input.addEventListener('input', () => {
+      item[key] = input.value;
+      syncFashionLegacyCards();
+      if (key === 'image') syncTalentPreview(input.value);
+    });
+    if (key === 'image') imageUrlInput = input;
+    label.append(title, input);
+    fields.appendChild(label);
+  };
+
+  addField('Title', 'title');
+  addField('Description', 'body', 'textarea');
+  addField('Link URL', 'url');
+  addField('Image URL', 'image');
+
+  const preview = document.createElement('img');
+  preview.className = 'admin-image-preview';
+  syncTalentPreview(item.image);
+  fields.appendChild(preview);
+
+  const uploadWrap = document.createElement('div');
+  uploadWrap.className = 'module-upload';
+  const uploadInput = document.createElement('input');
+  uploadInput.type = 'file';
+  uploadInput.accept = 'image/*';
+  uploadInput.className = 'admin-input';
+  const uploadBtn = document.createElement('button');
+  uploadBtn.type = 'button';
+  uploadBtn.className = 'admin-btn';
+  uploadBtn.textContent = 'Upload Image';
+  uploadBtn.addEventListener('click', async () => {
+    const [file] = uploadInput.files || [];
+    if (!file) {
+      renderStatus('Select an image file first.', true);
+      return;
+    }
+    try {
+      await ensureAuthOrFail();
+      renderStatus('Uploading talent image...');
+      const url = await cmsApi.uploadImageToSupabase(file, `talent-${item.id || index}`);
+      item.image = url;
+      syncFashionLegacyCards();
+      draftContent = await cmsApi.saveContent(draftContent, { allowLocalFallback: false });
+      await verifyPublicSync();
+      ensureFashionCardsDraft();
+      if (imageUrlInput) imageUrlInput.value = url;
+      syncTalentPreview(url);
+      uploadInput.value = '';
+      renderStatus('Talent image uploaded and saved.');
+    } catch (error) {
+      renderStatus(error.message, true);
+    }
+  });
+  uploadWrap.append(uploadInput, uploadBtn);
+  fields.appendChild(uploadWrap);
+  card.appendChild(fields);
+
+  up.addEventListener('click', () => moveTalentCard(index, -1));
+  down.addEventListener('click', () => moveTalentCard(index, 1));
+  del.addEventListener('click', () => removeTalentCard(index));
+  return card;
+};
+
+const renderTalentCardsEditor = () => {
+  ensureFashionCardsDraft();
+  const section = document.createElement('section');
+  section.className = 'module-group';
+  const head = document.createElement('div');
+  head.className = 'module-group-head';
+  const title = document.createElement('h3');
+  title.textContent = 'Talent Cards';
+  const addBtn = document.createElement('button');
+  addBtn.type = 'button';
+  addBtn.className = 'admin-btn admin-btn-primary';
+  addBtn.textContent = '+ Add Talent Card';
+  addBtn.addEventListener('click', addTalentCard);
+  head.append(title, addBtn);
+  section.appendChild(head);
+
+  const list = document.createElement('div');
+  list.className = 'module-list';
+  draftContent.fashion.cards.forEach((item, index) => list.appendChild(createTalentCardEditor(item, index)));
+  section.appendChild(list);
+  fieldsRoot.appendChild(section);
 };
 
 const renderModulesEditor = () => {
@@ -600,6 +804,9 @@ const renderForm = () => {
   section.fields.forEach((field) => grid.appendChild(createInput(field, getByPath(draftContent, field.key))));
   sectionEl.appendChild(grid);
   fieldsRoot.appendChild(sectionEl);
+  if (section.id === 'fashion') {
+    renderTalentCardsEditor();
+  }
 };
 
 const handleAdminSignIn = async (event) => {
@@ -610,7 +817,9 @@ const handleAdminSignIn = async (event) => {
     await cmsApi.signInAdmin(emailInput.value.trim(), passwordInput.value);
     renderAuthState();
     draftContent = await cmsApi.loadContent();
+    await verifyPublicSync();
     normalizeHeroMediaDraft();
+    ensureFashionCardsDraft();
     renderForm();
     renderStatus('Signed in. Remote sync enabled.');
     passwordInput.value = '';
@@ -678,7 +887,9 @@ form.addEventListener('submit', async (event) => {
   if (!draftContent) return;
   try {
     await ensureAuthOrFail();
+    ensureFashionCardsDraft();
     draftContent = await cmsApi.saveContent(draftContent, { allowLocalFallback: false });
+    await verifyPublicSync();
     renderStatus('Saved to Supabase successfully.');
   } catch (error) {
     renderStatus(error.message, true);
@@ -691,6 +902,7 @@ resetButton.addEventListener('click', async () => {
   try {
     await ensureAuthOrFail();
     draftContent = await cmsApi.resetContent({ allowLocalFallback: false });
+    ensureFashionCardsDraft();
     renderForm();
     renderStatus('Remote content reset to defaults.');
   } catch (error) {
@@ -713,6 +925,7 @@ const initAdmin = async () => {
     if (passwordInput && !passwordInput.value) passwordInput.value = DEFAULT_ADMIN_PASSWORD;
     draftContent = await cmsApi.loadContent();
     normalizeHeroMediaDraft();
+    ensureFashionCardsDraft();
     renderAuthState();
     renderForm();
     renderStatus(cmsApi.isAdminAuthenticated() ? 'Signed in. Remote sync enabled.' : 'Sign in with Supabase Auth to save remotely.');

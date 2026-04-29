@@ -1,15 +1,49 @@
 const header = document.querySelector('.site-header');
 const menuToggle = document.querySelector('.menu-toggle');
 const nav = document.querySelector('.main-nav');
+const menuOverlay = document.querySelector('.menu-overlay');
 const heroMedia = document.querySelector('.hero-media');
+const talentCarousel = document.querySelector('#talent-carousel');
+const talentGrid = talentCarousel?.querySelector('.fashion-grid') || null;
+const talentPrev = talentCarousel?.querySelector('[data-talent-nav="prev"]') || null;
+const talentNext = talentCarousel?.querySelector('[data-talent-nav="next"]') || null;
+let talentAutoTimer = null;
+const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+const prefersCoarsePointer = window.matchMedia('(pointer: coarse)');
+let scrollTicking = false;
 
-window.addEventListener('scroll', () => {
+const shouldAnimateHeroOnScroll = () =>
+  !!heroMedia &&
+  !prefersReducedMotion.matches &&
+  !prefersCoarsePointer.matches &&
+  window.innerWidth > 980;
+
+const updateScrollEffects = () => {
+  scrollTicking = false;
   header?.classList.toggle('scrolled', window.scrollY > 16);
-  if (heroMedia) {
-    const offset = Math.min(window.scrollY * 0.08, 28);
-    heroMedia.style.transform = `scale(1.04) translateY(${offset}px)`;
+
+  if (!heroMedia) return;
+
+  if (!shouldAnimateHeroOnScroll()) {
+    heroMedia.style.removeProperty('transform');
+    return;
   }
-});
+
+  const offset = Math.min(window.scrollY * 0.08, 28);
+  heroMedia.style.transform = `translate3d(0, ${offset}px, 0) scale(1.04)`;
+};
+
+const queueScrollEffects = () => {
+  if (scrollTicking) return;
+  scrollTicking = true;
+  window.requestAnimationFrame(updateScrollEffects);
+};
+
+window.addEventListener('scroll', queueScrollEffects, { passive: true });
+window.addEventListener('resize', updateScrollEffects);
+prefersReducedMotion.addEventListener?.('change', updateScrollEffects);
+prefersCoarsePointer.addEventListener?.('change', updateScrollEffects);
+updateScrollEffects();
 
 const closeMenu = () => {
   nav?.classList.remove('open');
@@ -33,6 +67,12 @@ menuToggle?.addEventListener('click', () => {
   menuToggle.setAttribute('aria-label', 'Close menu');
   document.body.classList.add('menu-open');
   document.body.style.overflow = 'hidden';
+});
+
+menuOverlay?.addEventListener('click', closeMenu);
+
+document.addEventListener('keydown', (event) => {
+  if (event.key === 'Escape') closeMenu();
 });
 
 
@@ -73,6 +113,52 @@ const runTypeAnimation = () => {
 
 runTypeAnimation();
 window.addEventListener('cadsyent:content-applied', runTypeAnimation);
+
+const stopTalentAutoSlide = () => {
+  if (!talentAutoTimer) return;
+  clearInterval(talentAutoTimer);
+  talentAutoTimer = null;
+};
+
+const slideTalentsBy = (direction = 1) => {
+  if (!talentGrid) return;
+  const cards = talentGrid.querySelectorAll('.feature-card');
+  if (!cards.length) return;
+  const first = cards[0];
+  const gap = parseFloat(window.getComputedStyle(talentGrid).gap || '16') || 16;
+  const step = first.getBoundingClientRect().width + gap;
+  talentGrid.scrollBy({ left: direction * step, behavior: 'smooth' });
+};
+
+const refreshTalentSlider = () => {
+  if (!talentCarousel || !talentGrid) return;
+  const cards = talentGrid.querySelectorAll('.feature-card');
+  const shouldSlide = window.innerWidth > 980 && cards.length > 3;
+  talentCarousel.classList.toggle('is-slider-active', shouldSlide);
+
+  if (!shouldSlide) {
+    stopTalentAutoSlide();
+    talentGrid.scrollTo({ left: 0, behavior: 'auto' });
+    return;
+  }
+
+  stopTalentAutoSlide();
+  talentAutoTimer = window.setInterval(() => slideTalentsBy(1), 4200);
+};
+
+talentPrev?.addEventListener('click', () => {
+  stopTalentAutoSlide();
+  slideTalentsBy(-1);
+});
+
+talentNext?.addEventListener('click', () => {
+  stopTalentAutoSlide();
+  slideTalentsBy(1);
+});
+
+window.addEventListener('resize', refreshTalentSlider);
+window.addEventListener('cadsyent:content-applied', refreshTalentSlider);
+refreshTalentSlider();
 
 const revealItems = document.querySelectorAll('.reveal');
 const revealObserver = new IntersectionObserver((entries, observer) => {

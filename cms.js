@@ -4,7 +4,7 @@ const CADSYENT_SUPABASE_TABLE = 'site_content';
 const CADSYENT_AUTH_STORAGE_KEY = 'cadsyent.supabase.auth.v1';
 
 const CADSYENT_CMS_DEFAULTS = {
-  brandName: 'CADSYENT',
+  brandName: 'CADSY BROWN ENTERTAINMENT',
   brandLogo: '',
   social: {
     instagramUrl: '#',
@@ -24,21 +24,44 @@ const CADSYENT_CMS_DEFAULTS = {
     media: ''
   },
   fashion: {
-    lead: 'Cadsyent represents musicians, actors, and content creators building global audiences. We help talent lead conversations and shape culture across music, film, and digital platforms.',
+    lead: 'Cadsy Brown Entertainment represents musicians, actors, and content creators building global audiences. We help talent lead conversations and shape culture across music, film, and digital platforms.',
+    cards: [
+      {
+        id: 'talent-1',
+        title: 'Actress',
+        body: 'Strategic management for recording artists, producers, and DJs across releases, partnerships, and touring opportunities.',
+        image: '',
+        url: ''
+      },
+      {
+        id: 'talent-2',
+        title: 'Musician',
+        body: 'Career representation for screen talent spanning film, television, streaming productions, and brand collaborations.',
+        image: '',
+        url: ''
+      },
+      {
+        id: 'talent-3',
+        title: 'Musician',
+        body: 'End-to-end support for digital creators building consistent content, loyal communities, and high-impact partnerships.',
+        image: '',
+        url: ''
+      }
+    ],
     card1: {
-      title: 'Musicians',
+      title: 'Actress',
       body: 'Strategic management for recording artists, producers, and DJs across releases, partnerships, and touring opportunities.',
       image: '',
       url: ''
     },
     card2: {
-      title: 'Actors',
+      title: 'Musician',
       body: 'Career representation for screen talent spanning film, television, streaming productions, and brand collaborations.',
       image: '',
       url: ''
     },
     card3: {
-      title: 'Content Creators',
+      title: 'Musician',
       body: 'End-to-end support for digital creators building consistent content, loyal communities, and high-impact partnerships.',
       image: '',
       url: ''
@@ -53,7 +76,7 @@ const CADSYENT_CMS_DEFAULTS = {
   },
   events: {
     news: [
-      { id: 'news-1', title: 'Agency Updates', body: 'Latest announcements, talent milestones, and partnership highlights from across Cadsyent divisions.', published: true },
+      { id: 'news-1', title: 'Agency Updates', body: 'Latest announcements, talent milestones, and partnership highlights from across Cadsy Brown Entertainment divisions.', published: true },
       { id: 'news-2', title: 'Media Features', body: 'Coverage from global media platforms spotlighting our talent and campaigns.', published: true }
     ],
     blogs: [
@@ -62,19 +85,19 @@ const CADSYENT_CMS_DEFAULTS = {
       { id: 'blog-3', title: 'Creator Playbooks', body: 'Practical strategy for creators and brands looking to grow meaningful audience relationships.', image: '', published: true }
     ],
     testimonials: [
-      { id: 'tm-1', name: 'Amelia Jordan', role: 'Content Creator', initials: 'AJ', feedback: 'Cadsyent helped me move from local projects to global creator partnerships in less than a year.', published: true },
+      { id: 'tm-1', name: 'Amelia Jordan', role: 'Content Creator', initials: 'AJ', feedback: 'Cadsy Brown Entertainment helped me move from local projects to global creator partnerships in less than a year.', published: true },
       { id: 'tm-2', name: 'Daniel Kofi', role: 'Brand Director', initials: 'DK', feedback: 'Their team is reliable, strategic, and very sharp with culture-led campaigns that actually convert.', published: true },
-      { id: 'tm-3', name: 'Sarah Nettey', role: 'Talent Manager', initials: 'SN', feedback: 'Every collaboration has been smooth. Cadsyent delivers premium talent and clear communication.', published: true }
+      { id: 'tm-3', name: 'Sarah Nettey', role: 'Talent Manager', initials: 'SN', feedback: 'Every collaboration has been smooth. Cadsy Brown Entertainment delivers premium talent and clear communication.', published: true }
     ]
   },
   contact: {
     email: 'hello@cadsyent.com',
-    phone: '+1 (212) 555-0198',
-    phoneHref: '+12125550198',
-    address: 'New York, USA'
+    phone: '+233 54 688 8842',
+    phoneHref: '+233546888842',
+    address: 'Abelemkpe Santana Road, Swanika Street'
   },
   footer: {
-    copy: '© 2026 Cadsyent. All rights reserved.'
+    copy: '© 2026 Cadsy Brown Entertainment. All rights reserved.'
   }
 };
 
@@ -83,6 +106,34 @@ const isObject = (value) => typeof value === 'object' && value !== null && !Arra
 const safeParse = (value) => { try { return JSON.parse(value); } catch { return null; } };
 const slugify = (value) => value.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
 const nowSeconds = () => Math.floor(Date.now() / 1000);
+const normalizeSupabaseAssetUrl = (value = '') => {
+  const raw = String(value || '').trim();
+  if (!raw) return '';
+  if (/^https?:\/\/[^/]+\/object\//i.test(raw)) {
+    return raw.replace(/^(https?:\/\/[^/]+)\/object\//i, '$1/storage/v1/object/');
+  }
+  if (/^\/object\//i.test(raw)) {
+    return raw.replace(/^\/object\//i, '/storage/v1/object/');
+  }
+  return raw;
+};
+const toAbsoluteSupabaseUrl = (baseUrl, value) => {
+  const cleanBase = String(baseUrl || '').replace(/\/+$/, '');
+  const raw = normalizeSupabaseAssetUrl(value);
+  if (!raw) return '';
+  if (/^https?:\/\//i.test(raw)) return raw;
+  if (/^object\//i.test(raw)) return `${cleanBase}/storage/v1/${raw}`;
+  if (raw.startsWith('/')) return `${cleanBase}${raw}`;
+  return `${cleanBase}/${raw}`;
+};
+const resolveCmsAssetUrl = (value = '') => {
+  const normalized = normalizeSupabaseAssetUrl(value);
+  if (!normalized) return '';
+  if (/^https?:\/\//i.test(normalized)) return normalized;
+  const { url } = getSupabaseConfig();
+  if (!url) return normalized;
+  return toAbsoluteSupabaseUrl(url, normalized);
+};
 
 const deepMerge = (base, override) => {
   if (!isObject(base)) return override;
@@ -109,10 +160,25 @@ const normalizeMissionContent = (content) => {
     next.hero.meta2 = 'Music, Film, Creator Entertainment';
   }
 
+  const normalizedBrand = String(next.brandName || '').trim().toLowerCase();
+  if (!normalizedBrand || normalizedBrand === 'cadsyent' || normalizedBrand === 'cadsybrownent') {
+    next.brandName = 'Cadsy Brown Entertainment';
+  }
+
+  if (next.footer && typeof next.footer.copy === 'string' && /cadsyent/i.test(next.footer.copy)) {
+    next.footer.copy = next.footer.copy.replace(/cadsyent/gi, 'Cadsy Brown Entertainment');
+  }
+  if (typeof next.brandLogo === 'string') {
+    next.brandLogo = resolveCmsAssetUrl(next.brandLogo);
+  }
+
   const lead = String(next.fashion.lead || '').toLowerCase();
-  const hasLegacyLead = lead.includes('cadsyent fashion represents') || lead.includes('fashion, luxury, and beauty');
+  const hasLegacyLead =
+    lead.includes('cadsyent fashion represents') ||
+    lead.includes('fashion, luxury, and beauty') ||
+    lead.includes('cadsyent represents musicians, actors, and content creators building global audiences');
   if (hasLegacyLead) {
-    next.fashion.lead = 'Cadsyent represents musicians, actors, and content creators building global audiences. We help talent lead conversations and shape culture across music, film, and digital platforms.';
+    next.fashion.lead = 'Cadsy Brown Entertainment represents musicians, actors, and content creators building global audiences. We help talent lead conversations and shape culture across music, film, and digital platforms.';
   }
 
   if (String(next.fashion.card1.title || '').trim().toLowerCase() === 'art + commerce') {
@@ -128,6 +194,70 @@ const normalizeMissionContent = (content) => {
   if (String(next.fashion.card3.title || '').trim().toLowerCase() === 'the wall group') {
     next.fashion.card3.title = 'Content Creators';
     next.fashion.card3.body = 'End-to-end support for digital creators building consistent content, loyal communities, and high-impact partnerships.';
+  }
+
+  const defaultCards = (CADSYENT_CMS_DEFAULTS.fashion.cards || []).map((item, index) => ({
+    id: item.id || `talent-${index + 1}`,
+    title: String(item.title || ''),
+    body: String(item.body || ''),
+    image: String(item.image || ''),
+    url: String(item.url || '')
+  }));
+  const toCard = (item, index) => ({
+    id: String(item?.id || `talent-${index + 1}`),
+    title: String(item?.title || ''),
+    body: String(item?.body || ''),
+    image: resolveCmsAssetUrl(item?.image || ''),
+    url: String(item?.url || '')
+  });
+
+  const legacyCards = [next.fashion.card1, next.fashion.card2, next.fashion.card3]
+    .map((item, index) => toCard(item, index))
+    .filter((item) => item.title || item.body || item.image || item.url);
+
+  const cardsManaged = next.fashion.cardsManaged === true;
+  const listCards = Array.isArray(next.fashion.cards)
+    ? next.fashion.cards.map((item, index) => toCard(item, index)).filter((item) => item.title || item.body || item.image || item.url)
+    : [];
+  const normalizedListCards = !cardsManaged && listCards.length > 3 ? listCards.slice(0, 3) : listCards;
+
+  const normalizedCards = cardsManaged
+    ? (normalizedListCards.length ? normalizedListCards : (legacyCards.length ? legacyCards : defaultCards))
+    : (legacyCards.length ? legacyCards : (normalizedListCards.length ? normalizedListCards : defaultCards));
+  next.fashion.cards = normalizedCards;
+  next.fashion.card1 = toCard(normalizedCards[0] || defaultCards[0] || {}, 0);
+  next.fashion.card2 = toCard(normalizedCards[1] || defaultCards[1] || {}, 1);
+  next.fashion.card3 = toCard(normalizedCards[2] || defaultCards[2] || {}, 2);
+  if (next.divisions && isObject(next.divisions)) {
+    ['division1', 'division2', 'division3', 'division4', 'division5'].forEach((key) => {
+      if (next.divisions[key] && typeof next.divisions[key].image === 'string') {
+        next.divisions[key].image = resolveCmsAssetUrl(next.divisions[key].image);
+      }
+    });
+  }
+  if (next.hero && isObject(next.hero) && typeof next.hero.heroImage === 'string') {
+    next.hero.heroImage = resolveCmsAssetUrl(next.hero.heroImage);
+  }
+  if (next.hero && isObject(next.hero) && Array.isArray(next.hero.heroSlides)) {
+    next.hero.heroSlides = next.hero.heroSlides.map((slide) => {
+      if (typeof slide === 'string') {
+        const value = slide.trim();
+        if (!value) return value;
+        if (value.startsWith('video:')) return `video:${resolveCmsAssetUrl(value.slice(6).trim())}`;
+        if (value.startsWith('image:')) return `image:${resolveCmsAssetUrl(value.slice(6).trim())}`;
+        return resolveCmsAssetUrl(value);
+      }
+      if (isObject(slide)) {
+        return { ...slide, url: resolveCmsAssetUrl(slide.url || '') };
+      }
+      return slide;
+    });
+  }
+  if (next.events && isObject(next.events) && Array.isArray(next.events.blogs)) {
+    next.events.blogs = next.events.blogs.map((item) => ({
+      ...item,
+      image: resolveCmsAssetUrl(item?.image || '')
+    }));
   }
 
   return next;
@@ -298,7 +428,7 @@ const resetContentLocal = () => {
 const loadContentFromSupabase = async () => {
   const rows = await requestSupabase(
     `/rest/v1/${CADSYENT_SUPABASE_TABLE}?id=eq.${encodeURIComponent(CADSYENT_CMS_ROW_ID)}&select=content&limit=1`,
-    { method: 'GET' },
+    { method: 'GET', headers: { 'Cache-Control': 'no-cache' } },
     false
   );
   const row = Array.isArray(rows) && rows.length ? rows[0] : null;
@@ -360,6 +490,20 @@ const resetContent = async (options = {}) => {
   return resetContentLocal();
 };
 
+const verifyPublicContentReadable = async () => {
+  if (!hasSupabaseConfig()) return true;
+  try {
+    await requestSupabase(
+      `/rest/v1/${CADSYENT_SUPABASE_TABLE}?id=eq.${encodeURIComponent(CADSYENT_CMS_ROW_ID)}&select=id&limit=1`,
+      { method: 'GET', headers: { 'Cache-Control': 'no-cache' } },
+      false
+    );
+    return true;
+  } catch (error) {
+    throw new Error(`Public read check failed: ${error.message}`);
+  }
+};
+
 const uploadImageToSupabase = async (file, keyHint = 'image') => {
   const { url, anonKey, bucket } = getSupabaseConfig();
   const ready = await ensureAdminSession();
@@ -386,7 +530,31 @@ const uploadImageToSupabase = async (file, keyHint = 'image') => {
     }
     throw new Error(`Image upload failed (${response.status}): ${raw}`);
   }
-  return `${url}/storage/v1/object/public/${bucket}/${path}`;
+  const publicUrl = `${url}/storage/v1/object/public/${bucket}/${path}`;
+
+  // Prefer a long-lived signed URL so images still render when bucket is private.
+  try {
+    const signResponse = await fetch(`${url}/storage/v1/object/sign/${bucket}/${path}`, {
+      method: 'POST',
+      headers: {
+        apikey: anonKey,
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ expiresIn: 60 * 60 * 24 * 365 * 5 })
+    });
+    if (signResponse.ok) {
+      const signed = await signResponse.json();
+      const maybeSigned = (signed && (signed.signedURL || signed.signedUrl || signed.url)) || '';
+      if (typeof maybeSigned === 'string' && maybeSigned.trim()) {
+        return toAbsoluteSupabaseUrl(url, maybeSigned);
+      }
+    }
+  } catch {
+    // Fall back to public URL if signing fails for any reason.
+  }
+
+  return publicUrl;
 };
 
 const setText = (selector, value) => {
@@ -411,8 +579,8 @@ const normalizeCardUrl = (value = '') => {
   return `https://${raw}`;
 };
 
-const setCardLink = (selector, url) => {
-  const card = document.querySelector(selector);
+const setCardLink = (target, url) => {
+  const card = typeof target === 'string' ? document.querySelector(target) : target;
   if (!card) return;
   const href = normalizeCardUrl(url);
   if (!href) {
@@ -446,9 +614,66 @@ const setCardLink = (selector, url) => {
   });
 };
 
+const getTalentCards = (fashion = {}) => {
+  const fixImageUrl = (value) => {
+    const raw = resolveCmsAssetUrl(value);
+    if (!raw) return '';
+    const match = raw.match(/(https?:\/\/[^"'\s]+?supabase\.co)(https?:\/\/[^"'\s]+)$/i);
+    if (match && match[2]) return match[2];
+    return raw;
+  };
+  const toCard = (item, index) => ({
+    id: String(item?.id || `talent-${index + 1}`),
+    title: String(item?.title || ''),
+    body: String(item?.body || ''),
+    image: fixImageUrl(item?.image),
+    url: String(item?.url || '')
+  });
+  const fromList = Array.isArray(fashion.cards) ? fashion.cards.map((item, index) => toCard(item, index)) : [];
+  if (fromList.length) return fromList;
+  return [fashion.card1, fashion.card2, fashion.card3]
+    .map((item, index) => toCard(item, index))
+    .filter((item) => item.title || item.body || item.image || item.url);
+};
+
+const renderTalentCards = (fashion = {}) => {
+  const grid = document.querySelector('.fashion-grid');
+  if (!grid) return;
+
+  const maxItems = Number.parseInt(grid.dataset.maxItems || '', 10);
+  const cards = getTalentCards(fashion);
+  const visibleCards = Number.isFinite(maxItems) && maxItems > 0
+    ? cards.slice(0, maxItems)
+    : cards;
+  grid.innerHTML = '';
+
+  visibleCards.forEach((item, index) => {
+    const article = document.createElement('article');
+    article.className = 'feature-card';
+
+    const image = document.createElement('div');
+    image.className = `feature-image image-${((index % 3) + 1)}`;
+    if (item.image) {
+      image.style.backgroundImage = `linear-gradient(rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0.28)), url("${item.image}")`;
+      image.style.backgroundSize = 'cover';
+      image.style.backgroundPosition = 'center 18%';
+    }
+
+    const title = document.createElement('h3');
+    title.textContent = item.title || '';
+
+    const body = document.createElement('p');
+    body.textContent = item.body || '';
+
+    article.append(image, title, body);
+    setCardLink(article, item.url);
+    grid.appendChild(article);
+  });
+};
+
 const setBrandIdentity = (brandName, brandLogo) => {
-  const label = typeof brandName === 'string' && brandName.trim() ? brandName.trim() : 'Cadsyent';
-  const logoUrl = typeof brandLogo === 'string' ? brandLogo.trim() : '';
+  const label = typeof brandName === 'string' && brandName.trim() ? brandName.trim() : 'Cadsy Brown Entertainment';
+  const logoUrl = typeof brandLogo === 'string' ? resolveCmsAssetUrl(brandLogo) : '';
   document.querySelectorAll('.brand, .menu-brand').forEach((el) => {
     el.innerHTML = '';
     if (logoUrl) {
@@ -467,10 +692,12 @@ const setBrandIdentity = (brandName, brandLogo) => {
 const setOverlayImage = (selector, imageData, fallbackClass = '') => {
   const el = document.querySelector(selector);
   if (!el) return;
+  const isTalentFeature = /^#feature-image-\d+$/.test(selector);
+  const preferredPosition = isTalentFeature ? 'center 18%' : 'center';
   if (typeof imageData === 'string' && imageData.trim()) {
     el.style.backgroundImage = `linear-gradient(rgba(0, 0, 0, 0.24), rgba(0, 0, 0, 0.5)), url("${imageData}")`;
     el.style.backgroundSize = 'cover';
-    el.style.backgroundPosition = 'center';
+    el.style.backgroundPosition = preferredPosition;
     return;
   }
   el.style.backgroundImage = '';
@@ -490,7 +717,7 @@ const setDivisionHoverImage = (selector, imageData) => {
   if (hasImage) {
     el.style.backgroundImage = `linear-gradient(rgba(0, 0, 0, 0.18), rgba(0, 0, 0, 0.36)), url("${imageData}")`;
     el.style.backgroundSize = 'cover';
-    el.style.backgroundPosition = 'center';
+    el.style.backgroundPosition = 'center 18%';
     return;
   }
   el.style.backgroundImage = '';
@@ -509,9 +736,9 @@ const normalizeHeroSlides = (hero = {}) => {
     if (typeof raw === 'string') {
       const value = raw.trim();
       if (!value) return null;
-      if (value.startsWith('video:')) return { type: 'video', url: value.slice(6).trim() };
-      if (value.startsWith('image:')) return { type: 'image', url: value.slice(6).trim() };
-      return { type: isLikelyVideoUrl(value) ? 'video' : 'image', url: value };
+      if (value.startsWith('video:')) return { type: 'video', url: resolveCmsAssetUrl(value.slice(6).trim()) };
+      if (value.startsWith('image:')) return { type: 'image', url: resolveCmsAssetUrl(value.slice(6).trim()) };
+      return { type: isLikelyVideoUrl(value) ? 'video' : 'image', url: resolveCmsAssetUrl(value) };
     }
     if (!isObject(raw)) return null;
     const url = typeof raw.url === 'string' ? raw.url.trim() : '';
@@ -519,7 +746,7 @@ const normalizeHeroSlides = (hero = {}) => {
     const type = raw.type === 'video' || raw.type === 'image'
       ? raw.type
       : (isLikelyVideoUrl(url) ? 'video' : 'image');
-    return { type, url };
+    return { type, url: resolveCmsAssetUrl(url) };
   };
 
   const slideList = Array.isArray(hero.heroSlides) ? hero.heroSlides : [];
@@ -696,18 +923,7 @@ const applyContent = (content = deepClone(CADSYENT_CMS_DEFAULTS)) => {
   setText('#hero-meta-2', merged.hero.meta2);
   setHeroMedia('.hero-media', merged.hero);
   setText('#fashion-lead', merged.fashion.lead);
-  setText('#feature-title-1', merged.fashion.card1.title);
-  setText('#feature-body-1', merged.fashion.card1.body);
-  setText('#feature-title-2', merged.fashion.card2.title);
-  setText('#feature-body-2', merged.fashion.card2.body);
-  setText('#feature-title-3', merged.fashion.card3.title);
-  setText('#feature-body-3', merged.fashion.card3.body);
-  setOverlayImage('#feature-image-1', merged.fashion.card1.image, 'image-1');
-  setOverlayImage('#feature-image-2', merged.fashion.card2.image, 'image-2');
-  setOverlayImage('#feature-image-3', merged.fashion.card3.image, 'image-3');
-  setCardLink('#feature-card-1', merged.fashion.card1.url);
-  setCardLink('#feature-card-2', merged.fashion.card2.url);
-  setCardLink('#feature-card-3', merged.fashion.card3.url);
+  renderTalentCards(merged.fashion);
   setText('#division-title-1', merged.divisions.division1.title);
   setText('#division-body-1', merged.divisions.division1.body);
   setDivisionHoverImage('#division-image-1', merged.divisions.division1.image);
@@ -744,6 +960,7 @@ window.CadsyentCMS = {
   resetContent,
   applyContent,
   getStorageMode,
+  verifyPublicContentReadable,
   signInAdmin,
   sendPasswordReset,
   signOutEverywhere,
@@ -763,3 +980,6 @@ if (document.readyState === 'loading') {
 } else {
   applyOnReady();
 }
+
+
+
