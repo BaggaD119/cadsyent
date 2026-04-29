@@ -1444,12 +1444,12 @@ p {
   .main-nav {
     position: fixed;
     top: 50%;
-    right: 16px;
+    left: 50%;
+    right: auto;
     bottom: auto;
-    left: auto;
     width: min(380px, 85vw);
     max-height: 72vh;
-    transform: translate(100%, -50%);
+    transform: translate(-50%, calc(-50% + 200px));
     background: rgba(20, 20, 20, 0.95);
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 20px;
@@ -1465,7 +1465,7 @@ p {
 
   .main-nav.open {
     opacity: 1;
-    transform: translate(0, -50%);
+    transform: translate(-50%, -50%);
     pointer-events: auto;
   }
 
@@ -1594,12 +1594,6 @@ p {
   body.menu-open .menu-overlay {
     opacity: 1;
     pointer-events: auto;
-  }
-
-  body.menu-open .hero,
-  body.menu-open .site-header,
-  body.menu-open .section {
-    filter: blur(8px);
   }
 
   .social-links {
