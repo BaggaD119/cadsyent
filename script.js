@@ -1,52 +1,153 @@
 /* ─── Page Loader ─────────────────────────────────────────────────────────── */
 (function () {
-  const loader = document.getElementById('page-loader');
-  const loaderText = document.getElementById('loader-text');
+  const loader = document.getElementById("page-loader");
+  const loaderText = document.getElementById("loader-text");
   if (!loader) return;
 
-  const states = ['Loading...', 'Fetching Data..', 'Syncing...', 'Processing..', 'Optimizing...'];
+  const states = [
+    "Loading...",
+    "Fetching Data..",
+    "Syncing...",
+    "Processing..",
+    "Optimizing...",
+  ];
   let i = 0;
-  const textInterval = setInterval(() => {
-    i = (i + 1) % states.length;
-    if (loaderText) {
-      loaderText.style.animation = 'none';
-      // Force reflow so the animation restarts
-      void loaderText.offsetWidth;
-      loaderText.style.animation = '';
-      loaderText.textContent = states[i];
-    }
-  }, 1000);
+  let textInterval = null;
+
+  const startTextCycle = () => {
+    textInterval = setInterval(() => {
+      i = (i + 1) % states.length;
+      if (loaderText) {
+        loaderText.style.animation = "none";
+        void loaderText.offsetWidth;
+        loaderText.style.animation = "";
+        loaderText.textContent = states[i];
+      }
+    }, 1000);
+  };
 
   const hideLoader = () => {
     clearInterval(textInterval);
-    loader.classList.add('loader-hidden');
-    loader.addEventListener('transitionend', () => {
-      loader.remove();
-    }, { once: true });
+    loader.classList.add("loader-hidden");
+    loader.addEventListener("transitionend", () => loader.remove(), {
+      once: true,
+    });
   };
 
-  if (document.readyState === 'complete') {
-    // Already loaded — short delay so the animation is visible
-    setTimeout(hideLoader, 600);
+  const showLoader = () => {
+    // Reset and re-show for page transitions
+    loader.classList.remove("loader-hidden");
+    if (loaderText) {
+      loaderText.textContent = "Loading...";
+      i = 0;
+    }
+    clearInterval(textInterval);
+    startTextCycle();
+  };
+
+  // Start cycling text on initial load
+  startTextCycle();
+
+  // Hide once page is ready
+  if (document.readyState === "complete") {
+    setTimeout(hideLoader, 700);
   } else {
-    window.addEventListener('load', () => setTimeout(hideLoader, 400));
+    window.addEventListener("load", () => setTimeout(hideLoader, 500));
+  }
+
+  // Intercept all internal navigation links for page-transition loading
+  document.addEventListener("click", (e) => {
+    const anchor = e.target.closest("a[href]");
+    if (!anchor) return;
+
+    const href = anchor.getAttribute("href");
+    if (!href) return;
+
+    // Skip: external links, mailto, tel, hash-only, new tab
+    if (
+      href.startsWith("http") ||
+      href.startsWith("mailto") ||
+      href.startsWith("tel") ||
+      href.startsWith("#") ||
+      anchor.target === "_blank"
+    )
+      return;
+
+    // It's an internal page navigation — show loader then navigate
+    e.preventDefault();
+
+    // Re-inject loader if it was removed
+    let activeLoader = document.getElementById("page-loader");
+    if (!activeLoader) {
+      activeLoader = buildLoaderEl();
+      document.body.prepend(activeLoader);
+    }
+
+    const activeText = document.getElementById("loader-text");
+    if (activeText) {
+      activeText.textContent = "Loading...";
+    }
+    activeLoader.classList.remove("loader-hidden");
+    clearInterval(textInterval);
+
+    let j = 0;
+    textInterval = setInterval(() => {
+      j = (j + 1) % states.length;
+      const t = document.getElementById("loader-text");
+      if (t) {
+        t.style.animation = "none";
+        void t.offsetWidth;
+        t.style.animation = "";
+        t.textContent = states[j];
+      }
+    }, 1000);
+
+    setTimeout(() => {
+      window.location.href = href;
+    }, 900);
+  });
+
+  function buildLoaderEl() {
+    const el = document.createElement("div");
+    el.id = "page-loader";
+    el.setAttribute("aria-hidden", "true");
+    el.innerHTML = `
+      <div class="loader-inner">
+        <div class="loader-spinner">
+          <div class="loader-glow"></div>
+          <div class="loader-ring-outer"></div>
+          <div class="loader-arc-main"></div>
+          <div class="loader-arc-reverse"></div>
+          <div class="loader-ring-inner"></div>
+          <div class="loader-orbital"><div class="loader-dot"></div></div>
+          <div class="loader-core"></div>
+        </div>
+        <div class="loader-text-wrap">
+          <span id="loader-text" class="loader-text">Loading...</span>
+        </div>
+      </div>`;
+    return el;
   }
 })();
 
 /* ─────────────────────────────────────────────────────────────────────────── */
 
-const header = document.querySelector('.site-header');
-const menuToggle = document.querySelector('.menu-toggle');
-const nav = document.querySelector('.main-nav');
-const menuOverlay = document.querySelector('.menu-overlay');
-const heroMedia = document.querySelector('.hero-media');
-const talentCarousel = document.querySelector('#talent-carousel');
-const talentGrid = talentCarousel?.querySelector('.fashion-grid') || null;
-const talentPrev = talentCarousel?.querySelector('[data-talent-nav="prev"]') || null;
-const talentNext = talentCarousel?.querySelector('[data-talent-nav="next"]') || null;
+const header = document.querySelector(".site-header");
+const menuToggle = document.querySelector(".menu-toggle");
+const nav = document.querySelector(".main-nav");
+const menuOverlay = document.querySelector(".menu-overlay");
+const heroMedia = document.querySelector(".hero-media");
+const talentCarousel = document.querySelector("#talent-carousel");
+const talentGrid = talentCarousel?.querySelector(".fashion-grid") || null;
+const talentPrev =
+  talentCarousel?.querySelector('[data-talent-nav="prev"]') || null;
+const talentNext =
+  talentCarousel?.querySelector('[data-talent-nav="next"]') || null;
 let talentAutoTimer = null;
-const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-const prefersCoarsePointer = window.matchMedia('(pointer: coarse)');
+const prefersReducedMotion = window.matchMedia(
+  "(prefers-reduced-motion: reduce)",
+);
+const prefersCoarsePointer = window.matchMedia("(pointer: coarse)");
 let scrollTicking = false;
 
 const shouldAnimateHeroOnScroll = () =>
@@ -57,12 +158,12 @@ const shouldAnimateHeroOnScroll = () =>
 
 const updateScrollEffects = () => {
   scrollTicking = false;
-  header?.classList.toggle('scrolled', window.scrollY > 16);
+  header?.classList.toggle("scrolled", window.scrollY > 16);
 
   if (!heroMedia) return;
 
   if (!shouldAnimateHeroOnScroll()) {
-    heroMedia.style.removeProperty('transform');
+    heroMedia.style.removeProperty("transform");
     return;
   }
 
@@ -76,52 +177,51 @@ const queueScrollEffects = () => {
   window.requestAnimationFrame(updateScrollEffects);
 };
 
-window.addEventListener('scroll', queueScrollEffects, { passive: true });
-window.addEventListener('resize', updateScrollEffects);
-prefersReducedMotion.addEventListener?.('change', updateScrollEffects);
-prefersCoarsePointer.addEventListener?.('change', updateScrollEffects);
+window.addEventListener("scroll", queueScrollEffects, { passive: true });
+window.addEventListener("resize", updateScrollEffects);
+prefersReducedMotion.addEventListener?.("change", updateScrollEffects);
+prefersCoarsePointer.addEventListener?.("change", updateScrollEffects);
 updateScrollEffects();
 
 const closeMenu = () => {
-  nav?.classList.remove('open');
-  menuToggle?.setAttribute('aria-expanded', 'false');
-  menuToggle?.classList.remove('is-open');
-  menuToggle?.setAttribute('aria-label', 'Open menu');
-  document.body.classList.remove('menu-open');
-  document.body.style.overflow = '';
+  nav?.classList.remove("open");
+  menuToggle?.setAttribute("aria-expanded", "false");
+  menuToggle?.classList.remove("is-open");
+  menuToggle?.setAttribute("aria-label", "Open menu");
+  document.body.classList.remove("menu-open");
+  document.body.style.overflow = "";
 };
 
-menuToggle?.addEventListener('click', () => {
-  const expanded = menuToggle.getAttribute('aria-expanded') === 'true';
+menuToggle?.addEventListener("click", () => {
+  const expanded = menuToggle.getAttribute("aria-expanded") === "true";
   if (expanded) {
     closeMenu();
     return;
   }
 
-  menuToggle.setAttribute('aria-expanded', 'true');
-  nav?.classList.add('open');
-  menuToggle.classList.add('is-open');
-  menuToggle.setAttribute('aria-label', 'Close menu');
-  document.body.classList.add('menu-open');
-  document.body.style.overflow = 'hidden';
+  menuToggle.setAttribute("aria-expanded", "true");
+  nav?.classList.add("open");
+  menuToggle.classList.add("is-open");
+  menuToggle.setAttribute("aria-label", "Close menu");
+  document.body.classList.add("menu-open");
+  document.body.style.overflow = "hidden";
 });
 
-menuOverlay?.addEventListener('click', closeMenu);
+menuOverlay?.addEventListener("click", closeMenu);
 
-document.addEventListener('keydown', (event) => {
-  if (event.key === 'Escape') closeMenu();
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape") closeMenu();
 });
 
-
-nav?.querySelectorAll('a').forEach((link) => {
-  link.addEventListener('click', closeMenu);
+nav?.querySelectorAll("a").forEach((link) => {
+  link.addEventListener("click", closeMenu);
 });
 
-const typeLines = document.querySelectorAll('.type-line');
+const typeLines = document.querySelectorAll(".type-line");
 let typeRunId = 0;
 
 const typeText = (el, text, speed = 55, runId = 0) => {
-  el.classList.add('typing');
+  el.classList.add("typing");
   let i = 0;
   const step = () => {
     if (runId && runId !== typeRunId) return;
@@ -130,7 +230,7 @@ const typeText = (el, text, speed = 55, runId = 0) => {
     if (i <= text.length) {
       window.setTimeout(step, speed);
     } else {
-      el.classList.remove('typing');
+      el.classList.remove("typing");
     }
   };
   step();
@@ -141,15 +241,15 @@ const runTypeAnimation = () => {
   const runId = ++typeRunId;
   let delay = 220;
   typeLines.forEach((line) => {
-    const text = line.dataset.text || '';
-    line.textContent = '';
+    const text = line.dataset.text || "";
+    line.textContent = "";
     window.setTimeout(() => typeText(line, text, 58, runId), delay);
     delay += text.length * 58 + 260;
   });
 };
 
 runTypeAnimation();
-window.addEventListener('cadsyent:content-applied', runTypeAnimation);
+window.addEventListener("cadsyent:content-applied", runTypeAnimation);
 
 const stopTalentAutoSlide = () => {
   if (!talentAutoTimer) return;
@@ -159,23 +259,23 @@ const stopTalentAutoSlide = () => {
 
 const slideTalentsBy = (direction = 1) => {
   if (!talentGrid) return;
-  const cards = talentGrid.querySelectorAll('.feature-card');
+  const cards = talentGrid.querySelectorAll(".feature-card");
   if (!cards.length) return;
   const first = cards[0];
-  const gap = parseFloat(window.getComputedStyle(talentGrid).gap || '16') || 16;
+  const gap = parseFloat(window.getComputedStyle(talentGrid).gap || "16") || 16;
   const step = first.getBoundingClientRect().width + gap;
-  talentGrid.scrollBy({ left: direction * step, behavior: 'smooth' });
+  talentGrid.scrollBy({ left: direction * step, behavior: "smooth" });
 };
 
 const refreshTalentSlider = () => {
   if (!talentCarousel || !talentGrid) return;
-  const cards = talentGrid.querySelectorAll('.feature-card');
+  const cards = talentGrid.querySelectorAll(".feature-card");
   const shouldSlide = window.innerWidth > 980 && cards.length > 3;
-  talentCarousel.classList.toggle('is-slider-active', shouldSlide);
+  talentCarousel.classList.toggle("is-slider-active", shouldSlide);
 
   if (!shouldSlide) {
     stopTalentAutoSlide();
-    talentGrid.scrollTo({ left: 0, behavior: 'auto' });
+    talentGrid.scrollTo({ left: 0, behavior: "auto" });
     return;
   }
 
@@ -183,45 +283,48 @@ const refreshTalentSlider = () => {
   talentAutoTimer = window.setInterval(() => slideTalentsBy(1), 4200);
 };
 
-talentPrev?.addEventListener('click', () => {
+talentPrev?.addEventListener("click", () => {
   stopTalentAutoSlide();
   slideTalentsBy(-1);
 });
 
-talentNext?.addEventListener('click', () => {
+talentNext?.addEventListener("click", () => {
   stopTalentAutoSlide();
   slideTalentsBy(1);
 });
 
-window.addEventListener('resize', refreshTalentSlider);
-window.addEventListener('cadsyent:content-applied', refreshTalentSlider);
+window.addEventListener("resize", refreshTalentSlider);
+window.addEventListener("cadsyent:content-applied", refreshTalentSlider);
 refreshTalentSlider();
 
-const revealItems = document.querySelectorAll('.reveal');
-const revealObserver = new IntersectionObserver((entries, observer) => {
-  entries.forEach((entry) => {
-    if (!entry.isIntersecting) return;
-    const delay = Number(entry.target.dataset.delay || 0);
-    window.setTimeout(() => {
-      entry.target.classList.add('visible');
-    }, delay);
-    observer.unobserve(entry.target);
-  });
-}, { threshold: 0.18 });
+const revealItems = document.querySelectorAll(".reveal");
+const revealObserver = new IntersectionObserver(
+  (entries, observer) => {
+    entries.forEach((entry) => {
+      if (!entry.isIntersecting) return;
+      const delay = Number(entry.target.dataset.delay || 0);
+      window.setTimeout(() => {
+        entry.target.classList.add("visible");
+      }, delay);
+      observer.unobserve(entry.target);
+    });
+  },
+  { threshold: 0.18 },
+);
 
 revealItems.forEach((item) => revealObserver.observe(item));
 
-const divisionSection = document.querySelector('.divisions');
+const divisionSection = document.querySelector(".divisions");
 const divisionItems = Array.from(
-  document.querySelectorAll('.divisions .division-item')
+  document.querySelectorAll(".divisions .division-item"),
 );
 let activeDivisionItem = null;
 
 const setActiveDivisionItem = (nextItem) => {
   if (activeDivisionItem === nextItem) return;
-  activeDivisionItem?.classList.remove('is-scroll-active');
+  activeDivisionItem?.classList.remove("is-scroll-active");
   activeDivisionItem = nextItem || null;
-  activeDivisionItem?.classList.add('is-scroll-active');
+  activeDivisionItem?.classList.add("is-scroll-active");
 };
 
 const updateDivisionScrollState = () => {
@@ -246,9 +349,11 @@ const updateDivisionScrollState = () => {
   let shortestDistance = Number.POSITIVE_INFINITY;
 
   divisionItems.forEach((item) => {
-    if (!item.classList.contains('has-hover-media')) return;
+    if (!item.classList.contains("has-hover-media")) return;
     const rect = item.getBoundingClientRect();
-    const inView = rect.bottom > window.innerHeight * 0.18 && rect.top < window.innerHeight * 0.82;
+    const inView =
+      rect.bottom > window.innerHeight * 0.18 &&
+      rect.top < window.innerHeight * 0.82;
     if (!inView) return;
 
     const itemCenter = rect.top + rect.height / 2;
@@ -261,7 +366,10 @@ const updateDivisionScrollState = () => {
   });
 
   if (!nextItem) {
-    nextItem = divisionItems.find((item) => item.classList.contains('has-hover-media')) || null;
+    nextItem =
+      divisionItems.find((item) =>
+        item.classList.contains("has-hover-media"),
+      ) || null;
   }
 
   setActiveDivisionItem(nextItem);
@@ -277,34 +385,38 @@ const queueDivisionScrollUpdate = () => {
   });
 };
 
-window.addEventListener('scroll', queueDivisionScrollUpdate, { passive: true });
-window.addEventListener('resize', queueDivisionScrollUpdate);
-window.addEventListener('load', updateDivisionScrollState);
-window.addEventListener('cadsyent:content-applied', updateDivisionScrollState);
+window.addEventListener("scroll", queueDivisionScrollUpdate, { passive: true });
+window.addEventListener("resize", queueDivisionScrollUpdate);
+window.addEventListener("load", updateDivisionScrollState);
+window.addEventListener("cadsyent:content-applied", updateDivisionScrollState);
 updateDivisionScrollState();
 
-const counters = document.querySelectorAll('.counter');
-const countObserver = new IntersectionObserver((entries, observer) => {
-  entries.forEach((entry) => {
-    if (!entry.isIntersecting) return;
+const counters = document.querySelectorAll(".counter");
+const countObserver = new IntersectionObserver(
+  (entries, observer) => {
+    entries.forEach((entry) => {
+      if (!entry.isIntersecting) return;
 
-    const el = entry.target;
-    const target = Number(el.dataset.target || 0);
-    const startTime = performance.now();
-    const duration = 1300;
+      const el = entry.target;
+      const target = Number(el.dataset.target || 0);
+      const startTime = performance.now();
+      const duration = 1300;
 
-    const tick = (time) => {
-      const progress = Math.min((time - startTime) / duration, 1);
-      const value = Math.floor(progress * target);
-      el.textContent = target >= 1000 ? value.toLocaleString() : String(value);
-      if (progress < 1) {
-        requestAnimationFrame(tick);
-      }
-    };
+      const tick = (time) => {
+        const progress = Math.min((time - startTime) / duration, 1);
+        const value = Math.floor(progress * target);
+        el.textContent =
+          target >= 1000 ? value.toLocaleString() : String(value);
+        if (progress < 1) {
+          requestAnimationFrame(tick);
+        }
+      };
 
-    requestAnimationFrame(tick);
-    observer.unobserve(el);
-  });
-}, { threshold: 0.4 });
+      requestAnimationFrame(tick);
+      observer.unobserve(el);
+    });
+  },
+  { threshold: 0.4 },
+);
 
 counters.forEach((counter) => countObserver.observe(counter));

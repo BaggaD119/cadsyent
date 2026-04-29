@@ -11,9 +11,25 @@
   <link rel="stylesheet" href="../../styles.css" />
 </head>
 <body>
+  <!-- Loading Screen -->
+  <div id="page-loader" aria-hidden="true">
+    <div class="loader-inner">
+      <div class="loader-spinner">
+        <div class="loader-glow"></div>
+        <div class="loader-ring-outer"></div>
+        <div class="loader-arc-main"></div>
+        <div class="loader-arc-reverse"></div>
+        <div class="loader-ring-inner"></div>
+        <div class="loader-orbital"><div class="loader-dot"></div></div>
+        <div class="loader-core"></div>
+      </div>
+      <div class="loader-text-wrap">
+        <span id="loader-text" class="loader-text">Initializing</span>
+      </div>
+    </div>
+  </div>
+
   <header class="site-header scrolled" id="top">
-    <div class="container nav-row">
-      <a href="../../index.html" class="brand" aria-label="Cadsy Brown Entertainment home">CADSY BROWN ENTERTAINMENT</a>
       <button class="menu-toggle" aria-expanded="false" aria-controls="mainNav" aria-label="Open menu">
         <span></span>
         <span></span>

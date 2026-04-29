@@ -11,6 +11,24 @@
   <link rel="stylesheet" href="../styles.css" />
 </head>
 <body>
+  <!-- Loading Screen -->
+  <div id="page-loader" aria-hidden="true">
+    <div class="loader-inner">
+      <div class="loader-spinner">
+        <div class="loader-glow"></div>
+        <div class="loader-ring-outer"></div>
+        <div class="loader-arc-main"></div>
+        <div class="loader-arc-reverse"></div>
+        <div class="loader-ring-inner"></div>
+        <div class="loader-orbital"><div class="loader-dot"></div></div>
+        <div class="loader-core"></div>
+      </div>
+      <div class="loader-text-wrap">
+        <span id="loader-text" class="loader-text">Initializing</span>
+      </div>
+    </div>
+  </div>
+
   <header class="site-header scrolled" id="top">
     <div class="container nav-row">
       <a href="../index.html" class="brand" aria-label="Cadsy Brown Entertainment home">CADSY BROWN ENTERTAINMENT</a>
@@ -19,7 +37,7 @@
         <span></span>
         <span></span>
       </button>
-            <nav class="main-nav" id="mainNav">
+      <nav class="main-nav" id="mainNav">
         <a href="../about/" class="desktop-nav-link">About</a>
         <a href="../expertise/fashion/" class="desktop-nav-link">Expertise</a>
         <a href="../expertise/fashion/" class="desktop-nav-link">Talents</a>
@@ -30,14 +48,10 @@
           <div class="mobile-drawer-header">
             <a href="../index.html#top" class="menu-brand">CADSY BROWN ENTERTAINMENT</a>
           </div>
-
-                    <div class="mobile-drawer-list">
+          <div class="mobile-drawer-list">
             <a href="../index.html#top" class="mobile-drawer-link">
               <span class="mobile-drawer-icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M3 10.5 12 3l9 7.5"></path>
-                  <path d="M5.5 9.5V20h13V9.5"></path>
-                </svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"></path><path d="M5.5 9.5V20h13V9.5"></path></svg>
               </span>
               <span class="mobile-drawer-copy">
                 <span class="mobile-drawer-title">Home</span>
@@ -46,10 +60,7 @@
             </a>
             <a href="../about/" class="mobile-drawer-link">
               <span class="mobile-drawer-icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M3 10.5 12 3l9 7.5"></path>
-                  <path d="M5.5 9.5V20h13V9.5"></path>
-                </svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"></path><path d="M5.5 9.5V20h13V9.5"></path></svg>
               </span>
               <span class="mobile-drawer-copy">
                 <span class="mobile-drawer-title">About</span>
@@ -58,11 +69,7 @@
             </a>
             <a href="../expertise/fashion/" class="mobile-drawer-link">
               <span class="mobile-drawer-icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M4 6.5h16"></path>
-                  <path d="M4 12h16"></path>
-                  <path d="M4 17.5h10"></path>
-                </svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6.5h16"></path><path d="M4 12h16"></path><path d="M4 17.5h10"></path></svg>
               </span>
               <span class="mobile-drawer-copy">
                 <span class="mobile-drawer-title">Expertise</span>
@@ -71,11 +78,7 @@
             </a>
             <a href="../expertise/fashion/" class="mobile-drawer-link">
               <span class="mobile-drawer-icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M12 3.5 4.5 8v8L12 20.5 19.5 16V8L12 3.5Z"></path>
-                  <path d="M9 12h6"></path>
-                  <path d="M9 15h4"></path>
-                </svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5 4.5 8v8L12 20.5 19.5 16V8L12 3.5Z"></path><path d="M9 12h6"></path><path d="M9 15h4"></path></svg>
               </span>
               <span class="mobile-drawer-copy">
                 <span class="mobile-drawer-title">Talents</span>
@@ -84,12 +87,7 @@
             </a>
             <a href="../contact/" class="mobile-drawer-link">
               <span class="mobile-drawer-icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M4 6.5h16v13H4z"></path>
-                  <path d="M7.5 4v5"></path>
-                  <path d="M16.5 4v5"></path>
-                  <path d="M4 10.5h16"></path>
-                </svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6.5h16v13H4z"></path><path d="M7.5 4v5"></path><path d="M16.5 4v5"></path><path d="M4 10.5h16"></path></svg>
               </span>
               <span class="mobile-drawer-copy">
                 <span class="mobile-drawer-title">Contact</span>
@@ -98,10 +96,7 @@
             </a>
             <a href="../brands/" class="mobile-drawer-link">
               <span class="mobile-drawer-icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                  <circle cx="12" cy="8" r="3.2"></circle>
-                  <path d="M5 19.5c1.2-3.3 3.7-5 7-5s5.8 1.7 7 5"></path>
-                </svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.2"></circle><path d="M5 19.5c1.2-3.3 3.7-5 7-5s5.8 1.7 7 5"></path></svg>
               </span>
               <span class="mobile-drawer-copy">
                 <span class="mobile-drawer-title">Brands</span>
@@ -110,13 +105,7 @@
             </a>
             <a href="../events/" class="mobile-drawer-link">
               <span class="mobile-drawer-icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M4.5 6.5h15v13h-15z"></path>
-                  <path d="M8 4.5v4"></path>
-                  <path d="M16 4.5v4"></path>
-                  <path d="M4.5 10.5h15"></path>
-                  <path d="M9 14h6"></path>
-                </svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 6.5h15v13h-15z"></path><path d="M8 4.5v4"></path><path d="M16 4.5v4"></path><path d="M4.5 10.5h15"></path><path d="M9 14h6"></path></svg>
               </span>
               <span class="mobile-drawer-copy">
                 <span class="mobile-drawer-title">Events</span>
@@ -124,9 +113,7 @@
               </span>
             </a>
           </div>
-
           <a href="../contact/" class="mobile-drawer-cta">Get Started</a>
-
           <div class="mobile-drawer-footer">
             <a href="#">Privacy Policy</a>
             <a href="#">Terms</a>
@@ -207,9 +194,7 @@
           <div class="contact-inquiry-head">
             <p class="contact-panel-label">Enquiry Form</p>
             <h2>Tell us what you need.</h2>
-            <p>
-              Share a few details and we will direct your request to the right team.
-            </p>
+            <p>Share a few details and we will direct your request to the right team.</p>
           </div>
           <form class="contact-lux-form" onsubmit="event.preventDefault(); alert('Thanks. We received your message.');">
             <div class="contact-form-row">
@@ -284,12 +269,3 @@
   <script src="../script.js?v=20260408d"></script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
