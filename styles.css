@@ -1449,7 +1449,8 @@ p {
     bottom: auto;
     width: min(340px, 80vw);
     max-height: 50vh;
-    transform: translate(-50%, calc(-50% + 200px));
+    margin-top: -500px;
+    transform: translateX(-50%);
     background: rgba(20, 20, 20, 0.95);
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 20px;
@@ -1458,14 +1459,14 @@ p {
     display: block;
     opacity: 0;
     pointer-events: none;
-    transition: opacity 0.28s ease, transform 0.54s cubic-bezier(0.22, 1.4, 0.3, 1);
+    transition: opacity 0.28s ease, margin-top 0.54s cubic-bezier(0.22, 1.4, 0.3, 1);
     overflow-y: auto;
     z-index: 120;
   }
 
   .main-nav.open {
     opacity: 1;
-    transform: translate(-50%, -50%);
+    margin-top: -25vh;
     pointer-events: auto;
   }
 
